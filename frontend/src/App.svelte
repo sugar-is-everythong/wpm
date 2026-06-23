@@ -14,13 +14,6 @@
 </main>
 
 <style>
-    ::-webkit-scrollbar {
-        display: none;
-    }
-
     .WINDOW-MAIN {
-        ::-webkit-scrollbar {
-            display: none;
-        }
     }
 </style>

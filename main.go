@@ -23,6 +23,7 @@ func main() {
 		Description: "给我的桌面塞进去一些壁纸",
 		Services: []application.Service{
 			application.NewService(&GreetService{}),
+			application.NewService(&ConfigService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.BundledAssetFileServer(assets),
@@ -31,6 +32,7 @@ func main() {
 		ShouldQuit: ShouldQuit,
 	})
 	App = app
+	initConfig()           // 加载配置
 	app.Show()
 
 	initWindow()           // 创建并初始化窗口

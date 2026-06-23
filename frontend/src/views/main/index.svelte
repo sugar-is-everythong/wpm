@@ -4,9 +4,11 @@
 
     let display = $state(0);
     let dirMap = $state({}); // { 0: ["C:/Images", "D:/Photos"], 1: [] }
+    let change = $state(false); // 修改标志用于显示确认按钮
 
     (() => {
         Screens.GetAll().then((num) => {
+            console.log(num)
             display = num
             // 初始化每个显示器的目录列表
             for (let i = 0; i < num; i++) {
@@ -24,10 +26,17 @@
         if (res && res.length > 0) {
             dirMap[monitorIndex] = [...(dirMap[monitorIndex] || []), ...res];
         }
+        
+        change = true
     }
 
     const removeDir = (monitorIndex, dirIndex) => {
         dirMap[monitorIndex] = dirMap[monitorIndex].filter((_, i) => i !== dirIndex);
+        change = true
+    }
+    
+    const okSet =()=>{
+    	
     }
 </script>
 
@@ -37,9 +46,14 @@
     </div>
 
     <div class="set-box">
-        {#each Array(display) as _, i}
+        {#each display as d, i}
             <div class="d-s">
-                <div class="d-s-title">🖥️ 显示器 {i + 1}
+                <div class="d-s-title" style:color={d.IsPrimary?'var(--main-2)':''}>
+                    🖥️ 显示器 {i + 1}
+                    <span> 宽：{d.Size.Width } 高：{d.Size.Height} | {d.Size.Width > d.Size.Height ? '横' : '纵'}
+                        向显示器</span>
+                </div>
+                <div class="select">
                     <input type="number" placeholder="切换间隔">
                     <span class="input-tip" title="设置壁纸自动切换的时间间隔，单位为分钟">⚠</span>
                     <button class="dir-add" onclick={() => openDir(i)}>＋ 选择目录</button>
@@ -56,16 +70,23 @@
             </div>
         {/each}
     </div>
+
+    {#if change}
+        <div class="bottom-box">
+            <button class="ok" onclick={okSet}>确定</button>
+            <button>取消</button>
+        </div>
+    {/if}
 </main>
 
 
 <style lang="scss">
     .main-box {
-        height: 100vh;
         display: grid;
-        grid-template-rows: 40px 1fr;
-        background: #f3f3f3;
-        border-radius: 8px;
+        height: 100vh;
+        grid-template-rows: 40px 1fr auto;
+        background-color: rgba(243, 243, 243, 0.8);
+        border-radius: 4px;
         font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
     }
 
@@ -86,12 +107,21 @@
             gap: 12px;
 
             .d-s-title {
+                user-select: none;
+
+                span {
+                    font-size: 13px;
+                    color: var(--text-5);
+                }
+            }
+
+            .select {
                 font-size: 14px;
                 font-weight: 600;
                 color: var(--text-1);
-                display: flex;
                 align-items: center;
                 gap: 12px;
+                display: flex;
 
                 input {
                     flex-shrink: 0;
@@ -102,6 +132,7 @@
                     border-radius: 4px;
                     border: 1px solid var(--text-6);
                     background: rgba(255, 255, 255, 0.6);
+                    //border-bottom: 2px solid rgba(0,0,0,0);
 
                     &:hover {
                         border-color: var(--text-4);
@@ -188,6 +219,30 @@
                     background: #e3e3e3;
                 }
             }
+        }
+    }
+
+    .bottom-box {
+        padding: 5px 10px;
+        padding-bottom: 10px;
+        display: flex;
+        flex-direction: row-reverse;
+        gap: 10px;
+
+        button {
+            padding: 5px 20px;
+            border-radius: 5px;
+            transition: background-color .1s ease;
+            border: 1px solid #ccc;
+        }
+
+        button:active {
+        }
+
+        .ok {
+            background-color: var(--main-2);
+            border: 1px solid transparent;
+            color: #fff;
         }
     }
 </style>

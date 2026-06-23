@@ -3,6 +3,7 @@ module wpm
 go 1.25.0
 
 require (
+	github.com/go-co-op/gocron/v2 v2.21.2
 	github.com/go-ole/go-ole v1.3.0
 	github.com/go-vgo/robotgo v1.0.2
 	github.com/wailsapp/wails/v3 v3.0.0-alpha2.105
@@ -15,14 +16,17 @@ require (
 	github.com/ebitengine/purego v0.10.0 // indirect
 	github.com/gen2brain/shm v0.2.1 // indirect
 	github.com/godbus/dbus/v5 v5.2.2 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20250406163304-c1995be93bd1 // indirect
 	github.com/jezek/xgb v1.3.0 // indirect
 	github.com/jezek/xgbutil v0.0.0-20260124183602-9fd151d6a51a // indirect
+	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20260324052639-156f7da3f749 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/otiai10/gosseract/v2 v2.4.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/shirou/gopsutil/v4 v4.26.2 // indirect
 	github.com/tailscale/win v0.0.0-20250627215312-f4da2b8ee071 // indirect
 	github.com/tklauser/go-sysconf v0.3.16 // indirect
