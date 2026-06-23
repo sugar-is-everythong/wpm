@@ -1,0 +1,6 @@
+{
+    "name": "frontend",
+    "scripts": {
+        "dev": "wails3 dev"
+    }
+}
