@@ -1,6 +1,6 @@
 <script>
     import WindowTopBar from "@/lib/windowTopBar/index.svelte";
-    import {ConfigService} from "~/configservice.js";
+    import {ConfigService} from "~/index.js";
 
     let cfg = $state({
         autoStart: true,

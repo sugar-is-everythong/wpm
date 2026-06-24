@@ -12,7 +12,7 @@ func initWindow() {
 		BackgroundColour: application.NewRGBA(6, 7, 15, 0),
 		Frameless:        true,
 		URL:              "/",
-		BackgroundType:   1,
+		BackgroundType:   2,
 	})
 
 	App.Window.NewWithOptions(application.WebviewWindowOptions{

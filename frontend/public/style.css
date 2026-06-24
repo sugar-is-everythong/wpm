@@ -1,60 +1,60 @@
 :root {
-    --theme-color: var(--main-1);
-    /*--main-color: #3498db;*/
-    --main-1: var(--green-1);
-    --main-2: var(--green-2);
-    --main-3: var(--green-3);
-    --main-4: var(--green-4);
-    --main-5: var(--green-5);
-    --main-6: var(--green-6);
-    --main-7: var(--green-7);
-    --main-8: var(--green-8);
-    --main-9: var(--green-9);
+    --pc: var(--main-2);
 
-    --blue-1: #409eff;
-    --blue-2: #65b2ff;
-    --blue-3: #93c5ff;
-    --blue-4: #a0cfff;
-    --blue-5: #d9ecff;
-    --blue-6: #e5f2ff;
-    --blue-7: #f2f7ff;
-    --blue-8: #f9f9fb;
-    --blue-9: #f9f9fb;
+    --main-1: var(--blue-1);
+    --main-2: var(--blue-2);
+    --main-3: var(--blue-3);
+    --main-4: var(--blue-4);
+    --main-5: var(--blue-5);
+    --main-6: var(--blue-6);
+    --main-7: var(--blue-7);
+    --main-8: var(--blue-8);
+    --main-9: var(--blue-9);
 
-    --green-1: #5aa535;
-    --green-2: #52C41A;
-    --green-3: #73d13d;
-    --green-4: #b3e6b9;
-    --green-5: #cbf6aa;
-    --green-6: #d9f7be;
-    --green-7: #f0f9eb;
-    --green-8: #f6ffed;
-    --green-9: #9fd8a8;
+    --blue-1: hsl(223 100% 40%);
+    --blue-2: hsl(222 100% 50%);
+    --blue-3: hsl(222 100% 55%);
+    --blue-4: hsl(222 100% 60%);
+    --blue-5: hsl(222 100% 65%);
+    --blue-6: hsl(222 100% 70%);
+    --blue-7: hsl(222 100% 75%);
+    --blue-8: hsl(222 100% 80%);
+    --blue-9: hsl(222 100% 90%);
+
+    --green-1: hsl(128 100% 40%);
+    --green-2: hsl(128 100% 50%);
+    --green-3: hsl(128 100% 55%);
+    --green-4: hsl(128 100% 60%);
+    --green-5: hsl(128 100% 65%);
+    --green-6: hsl(128 100% 70%);
+    --green-7: hsl(128 100% 75%);
+    --green-8: hsl(128 100% 80%);
+    --green-9: hsl(128 100% 90%);
 
 
-    --red-1: #cc0000;
-    --red-2: #e03333;
-    --red-3: #ff0000;
-    --red-4: #f09999;
-    --red-5: #f5c2c2;
-    --red-6: #f8d6d6;
-    --red-7: #fbebeb;
-    --red-8: #faf2f2;
-    --red-9: #faf2f2;
+    --red-1: hsl(0 100% 40%);
+    --red-2: hsl(0 100% 50%);
+    --red-3: hsl(0 100% 55%);
+    --red-4: hsl(0 100% 60%);
+    --red-5: hsl(0 100% 65%);
+    --red-6: hsl(0 100% 70%);
+    --red-7: hsl(0 100% 75%);
+    --red-8: hsl(0 100% 80%);
+    --red-9: hsl(0 100% 90%);
 
-    --text-1: #323335;
-    --text-2: #606266;
-    --text-3: #909399;
-    --text-4: #a8abb2;
-    --text-5: #c0c4cc;
-    --text-6: #dcdfe6;
-    --text-7: #e4e7ed;
-    --text-8: #f3f3f3;
-    --text-9: #f3f3f3;
+    --text-1: hsl(0 0% 0%);
+    --text-2: hsl(0 0 10%);
+    --text-3: hsl(0 0 20%);
+    --text-4: hsl(0 0 30%);
+    --text-5: hsl(0 0 40%);
+    --text-6: hsl(0 0 50%);
+    --text-7: hsl(0 0 60%);
+    --text-8: hsl(0 0 70%);
+    --text-9: hsl(0 0 80%);
 }
 
 html, body {
-    background-color: rgb(255 255 255 / 0);
+    background-color: rgb(255 255 255/0);
     outline: none;
     border: 0;
 }
@@ -99,14 +99,21 @@ input:not([type="radio"]):focus, textarea:focus {
     outline: none;
     border-color: var(--main-3);
     background-color: #fff;
-    box-shadow: 0 0 0 4px var(--main-7);
+    /*box-shadow: 0 -1px 0 1px var(--main-4) inset;*/
+    border-bottom: 2px solid var(--main-4);
 }
 
 input:not([type="radio"]):hover, textarea:hover {
     outline: none;
     border-color: var(--main-3);
     background-color: #fff;
-    box-shadow: 0 0 0 4px var(--main-7);
+    border-bottom: 2px solid var(--main-4);
+    /*box-shadow: 0 -1px 0 1px var(--main-4) inset;*/
+    /*box-shadow: 0 0 0 4px var(--main-7);*/
+}
+
+input[type=number]::-webkit-inner-spin-button {
+    display: none;
 }
 
 /* 自定义滚动条样式 */
