@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"github.com/go-co-op/gocron/v2"
 	"time"
+
+	"github.com/go-co-op/gocron/v2"
 )
 
 func init() {
@@ -12,7 +12,7 @@ func init() {
 	s.NewJob(
 		gocron.DurationJob(5*time.Second),
 		gocron.NewTask(func() {
-			fmt.Println("任务执行:", time.Now().Format("15:04:05"))
+			//fmt.Println("任务执行:", time.Now().Format("15:04:05"))
 		}),
 	)
 

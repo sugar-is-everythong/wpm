@@ -1,6 +1,8 @@
 <script>
     import WindowTopBar from "@/lib/windowTopBar/index.svelte";
     import {ConfigService} from "~/index.js";
+    import {route} from "@mateothegreat/svelte5-router";
+    import Myselect from "@/lib/Myselect.svelte";
 
     let cfg = $state({
         autoStart: true,
@@ -13,24 +15,28 @@
     let saving = $state(false);
 
     const toggleItems = [
-        {key: "autoStart", label: "启动后立即执行", desc: "程序启动时是否立即开始自动切换壁纸"},
-        {key: "switchAllMonitor", label: "切换所有显示器", desc: "自动切换时是否同时切换所有显示器壁纸"},
-        {key: "recursiveDir", label: "目录递归扫描", desc: "扫描壁纸目录时是否递归包含子目录中的图片"},
+        {key: "autoStart", label: "启动后立即执行", desc: "程序启动时是否立即切换一次壁纸"},
+        {key: "switchAllMonitor", label: "协同切换", desc: "自动切换时是否同时切换所有显示器壁纸"},
+        {key: "recursiveDir", label: "目录递归扫描", desc: "扫描壁纸目录时会一直向下找到所有图片随机设置壁纸"},
         {key: "registerContextMenu", label: "注册右键菜单", desc: "是否将程序注册到系统右键菜单"},
     ];
 
     const strategyOptions = [
-        {value: 0, label: "随机切换"},
-        {value: 1, label: "顺序切换"},
-        {value: 2, label: "鼠标所在屏幕"},
+        {value: 0, text: "随机切换"},
+        {value: 1, text: "顺序切换"},
+        {value: 2, text: "鼠标所在屏幕"},
     ];
 
     // 加载配置
     (() => {
-        ConfigService.GetConfig().then(res => { Object.assign(cfg, res); });
+        ConfigService.GetConfig().then(res => {
+            Object.assign(cfg, res);
+        });
     })();
 
-    const markChange = () => { change = true; };
+    const markChange = () => {
+        change = true;
+    };
 
     const save = async () => {
         saving = true;
@@ -45,18 +51,34 @@
     };
 
     const cancel = () => {
-        ConfigService.GetConfig().then(res => { Object.assign(cfg, res); change = false; });
+        ConfigService.GetConfig().then(res => {
+            Object.assign(cfg, res);
+            change = false;
+        });
     };
 </script>
 
 <main class="config-box">
     <div class="top">
-        <WindowTopBar --hover-color='var(--main-9)'/>
+        <WindowTopBar>
+            {#snippet ll()}
+                <div style="display: flex; align-items: flex-start; gap:3px;">
+                    <a href="/" use:route>
+                        <svg t="1782308980340" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8478"
+                             width="20" height="20">
+                            <path d="M224.32 505.6a31.936 31.936 0 0 1 10.88-19.84l222.08-222.08a32 32 0 0 1 45.12 45.12l-169.28 169.28H768a32 32 0 0 1 0 64H333.12l169.28 169.28a32 32 0 1 1-45.12 45.44l-224-224a31.968 31.968 0 0 1-8.96-27.2z"
+                                  fill="#202425" p-id="8479"></path>
+                        </svg>
+                    </a>
+                    壁纸切换策略
+                </div>
+            {/snippet}
+        </WindowTopBar>
     </div>
 
     <div class="config-content">
         <div class="config-section">
-            <div class="section-title">通用设置</div>
+            <div class="section-title">切换策略</div>
             {#each toggleItems as item}
                 <div class="config-item">
                     <div class="item-info">
@@ -69,18 +91,13 @@
                     </label>
                 </div>
             {/each}
-        </div>
 
-        <div class="config-section">
-            <div class="section-title">切换策略</div>
-            <div class="strategy-group">
-                {#each strategyOptions as opt}
-                    <label class="strategy-item" class:active={cfg.strategy === opt.value}>
-                        <input type="radio" name="strategy" value={opt.value} bind:group={cfg.strategy} onchange={markChange}/>
-                        <span class="strategy-radio"></span>
-                        <span class="strategy-label">{opt.label}</span>
-                    </label>
-                {/each}
+            <div class="config-item">
+                <div class="item-info">
+                    <div class="item-label">切换策略</div>
+                    <div class="item-desc">选择壁纸切换的方式</div>
+                </div>
+                <Myselect options={strategyOptions} bind:value={cfg.strategy} />
             </div>
         </div>
     </div>
@@ -94,6 +111,11 @@
 </main>
 
 <style lang="scss">
+    .top {
+        padding-left: 5px;
+        font-size: 14px;
+    }
+
     .config-box {
         display: grid;
         height: 100vh;
@@ -123,7 +145,7 @@
         .section-title {
             font-size: 14px;
             font-weight: 600;
-            color: var(--main-1);
+            color: var(--main-4);
             padding-bottom: 6px;
             border-bottom: 1px solid var(--text-7);
         }
@@ -192,7 +214,7 @@
         }
 
         input:checked + .toggle-slider {
-            background-color: var(--main-1);
+            background-color: var(--main-4);
 
             &::before {
                 transform: translateX(18px);
@@ -204,75 +226,10 @@
         }
     }
 
-    /* 单选策略组 */
-    .strategy-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
 
-    .strategy-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 14px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background .15s;
-        user-select: none;
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.03);
-        }
-
-        &.active {
-            background: var(--main-7);
-        }
-
-        input {
-            display: none;
-        }
-
-        .strategy-radio {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--text-4);
-            border-radius: 50%;
-            position: relative;
-            flex-shrink: 0;
-            transition: border-color .15s;
-
-            &::after {
-                content: "";
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) scale(0);
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background: var(--main-1);
-                transition: transform .15s;
-            }
-        }
-
-        &.active .strategy-radio {
-            border-color: var(--main-1);
-
-            &::after {
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        .strategy-label {
-            font-size: 14px;
-            color: var(--text-1);
-        }
-    }
 
     .bottom-box {
         padding: 5px 10px;
-        padding-bottom: 10px;
         display: flex;
         flex-direction: row-reverse;
         gap: 10px;

@@ -1,6 +1,7 @@
 <script>
     import WindowTopBar from "@/lib/windowTopBar/index.svelte";
     import {Dialogs, Screens, Window} from "@wailsio/runtime";
+    import {route} from "@mateothegreat/svelte5-router";
 
     let display = $state(0);
     let dirMap = $state({}); // { 0: ["C:/Images", "D:/Photos"], 1: [] }
@@ -45,16 +46,15 @@
     const viewSm = () => {
 
     }
-
-    // 跳转设置
-    const gotoSet = () => {
-
-    }
 </script>
 
 <main class="main-box">
     <div class="top">
-        <WindowTopBar --hover-color='var(--main-9)'/>
+        <WindowTopBar>
+            {#snippet ll()}
+                <div style="padding-left: 15px;font-size: 14px">塞壁纸</div>
+            {/snippet}
+        </WindowTopBar>
     </div>
 
     <div class="set-box">
@@ -93,7 +93,7 @@
 
     <div class="bottom-box">
         <button onclick={viewSm} title="使用说明">🔖</button>
-        <button onclick={gotoSet} title="设置页面">⚙</button>
+        <a title="设置页面" href="/config" use:route>⚙</a>
     </div>
 </main>
 
