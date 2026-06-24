@@ -7,8 +7,8 @@ func initWindow() {
 	App.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "塞壁纸",
 		Name:             "main window",
-		Width:            1000,
-		Height:           618,
+		Width:            600,
+		Height:           450,
 		BackgroundColour: application.NewRGBA(6, 7, 15, 0),
 		Frameless:        true,
 		URL:              "/",

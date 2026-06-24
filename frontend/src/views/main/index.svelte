@@ -2,20 +2,30 @@
     import WindowTopBar from "@/lib/windowTopBar/index.svelte";
     import {Dialogs, Screens, Window} from "@wailsio/runtime";
     import {route} from "@mateothegreat/svelte5-router";
+    import {ConfigService} from "~/index.js";
 
     let display = $state(0);
     let dirMap = $state({}); // { 0: ["C:/Images", "D:/Photos"], 1: [] }
-    let change = $state(false); // 修改标志用于显示确认按钮
+    let interval = $state(30);
+    let change = $state(false);// 修改标志用于显示确认按钮
 
     Window.SetAlwaysOnTop(true);
     (() => {
-        Screens.GetAll().then((num) => {
-            display = num
-            // 初始化每个显示器的目录列表
-            for (let i = 0; i < num; i++) {
+        Screens.GetAll().then((screens) => {
+            display = screens;
+            for (let i = 0; i < screens.length; i++) {
                 if (!dirMap[i]) dirMap[i] = [];
             }
-        })
+            // 加载配置
+            ConfigService.GetConfig().then(cfg => {
+                interval = cfg.interval || 30;
+                if (cfg.monitorDirs) {
+                    for (let i = 0; i < screens.length; i++) {
+                        dirMap[i] = cfg.monitorDirs[String(i)] || cfg.monitorDirs[i] || [];
+                    }
+                }
+            });
+        });
     })()
 
     const openDir = async (monitorIndex) => {
@@ -27,7 +37,6 @@
         if (res && res.length > 0) {
             dirMap[monitorIndex] = [...(dirMap[monitorIndex] || []), ...res];
         }
-
         change = true
     }
 
@@ -36,15 +45,33 @@
         dirMap[monitorIndex] = dirMap[monitorIndex].filter((_, i) => i !== dirIndex);
         change = true
     }
-
+    
     // 确定设置
-    const okSet = () => {
+    const okSet = async () => {
+        const dirs = {};
+        for (let i = 0; i < display.length; i++) {
+            dirs[i] = dirMap[i] || [];
+        }
+        try {
+            await ConfigService.SaveMonitorConfig(dirs, interval);
+            change = false;
+        } catch (e) {
+            console.error("保存失败:", e);
+        }
+    }
 
+    const cancel = () => {
+        ConfigService.GetConfig().then(cfg => {
+            interval = cfg.interval || 30;
+            for (let i = 0; i < display.length; i++) {
+                dirMap[i] = cfg.monitorDirs?.[String(i)] || cfg.monitorDirs?.[i] || [];
+            }
+            change = false;
+        });
     }
 
     // 查看说明
     const viewSm = () => {
-
     }
 </script>
 
@@ -66,7 +93,7 @@
                         向显示器</span>
                 </div>
                 <div class="select">
-                    <input type="number" placeholder="切换间隔">
+                    <input type="number" placeholder="切换间隔(分钟)" bind:value={interval} onchange={()=> {change=true}}>
                     <span class="input-tip" title="设置壁纸自动切换的时间间隔，单位为分钟">⚠</span>
                     <button class="dir-add" onclick={() => openDir(i)}>选择目录</button>
                 </div>
@@ -86,7 +113,7 @@
     {#if change}
         <div class="o-c-box">
             <button class="ok" onclick={okSet}>确定</button>
-            <button>取消</button>
+            <button onclick={cancel}>取消</button>
         </div>
     {/if}
 
@@ -142,13 +169,12 @@
 
                 input {
                     flex-shrink: 0;
-                    width: 80px;
+                    width: 110px;
                     height: 28px;
                     padding: 0 8px;
                     font-size: 13px;
                     border-radius: 4px;
                     background: rgba(255, 255, 255, 0.6);
-                    //border-bottom: 2px solid rgba(0,0,0,0);
                 }
 
                 .input-tip {
@@ -233,9 +259,6 @@
             border-radius: 5px;
             transition: background-color .1s ease;
             border: 1px solid #ccc;
-        }
-
-        button:active {
         }
 
         .ok {

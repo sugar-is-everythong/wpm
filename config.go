@@ -19,11 +19,13 @@ const (
 
 // AppConfig 应用配置
 type AppConfig struct {
-	AutoStart           bool           `json:"autoStart"`           // 程序启动后是否立即执行定时切换
-	SwitchAllMonitor    bool           `json:"switchAllMonitor"`    // 自动切换时是否同时切换所有显示器
-	RecursiveDir        bool           `json:"recursiveDir"`        // 扫描壁纸目录时是否递归子目录
-	Strategy            SwitchStrategy `json:"strategy"`            // 自动切换策略
-	RegisterContextMenu bool           `json:"registerContextMenu"` // 是否注册到系统右键菜单
+	AutoStart           bool             `json:"autoStart"`           // 程序启动后是否立即执行定时切换
+	SwitchAllMonitor    bool             `json:"switchAllMonitor"`    // 自动切换时是否同时切换所有显示器
+	RecursiveDir        bool             `json:"recursiveDir"`        // 扫描壁纸目录时是否递归子目录
+	Strategy            SwitchStrategy   `json:"strategy"`            // 自动切换策略
+	RegisterContextMenu bool             `json:"registerContextMenu"` // 是否注册到系统右键菜单
+	MonitorDirs         map[int][]string `json:"monitorDirs"`         // 每个显示器的壁纸目录
+	Interval            int              `json:"interval"`            // 切换间隔（分钟）
 }
 
 // Config 全局配置实例
@@ -33,6 +35,8 @@ var Config = AppConfig{
 	RecursiveDir:        true,
 	Strategy:            SwitchMouseScreen,
 	RegisterContextMenu: true,
+	MonitorDirs:         make(map[int][]string),
+	Interval:            30,
 }
 
 var configOnce sync.Once
@@ -81,10 +85,25 @@ func (c *ConfigService) GetConfig() AppConfig {
 	return Config
 }
 
-// SaveAppConfig 保存配置（从前端传入完整配置对象）
+// SaveAppConfig 保存通用配置
 func (c *ConfigService) SaveAppConfig(cfg AppConfig) error {
-	Config = cfg
+	Config.AutoStart = cfg.AutoStart
+	Config.SwitchAllMonitor = cfg.SwitchAllMonitor
+	Config.RecursiveDir = cfg.RecursiveDir
+	Config.Strategy = cfg.Strategy
+	Config.RegisterContextMenu = cfg.RegisterContextMenu
 	return SaveConfig()
+}
+
+// SaveMonitorConfig 保存显示器目录和间隔配置，并重启定时任务
+func (c *ConfigService) SaveMonitorConfig(monitorDirs map[int][]string, interval int) error {
+	Config.MonitorDirs = monitorDirs
+	Config.Interval = interval
+	if err := SaveConfig(); err != nil {
+		return err
+	}
+	RestartTimer()
+	return nil
 }
 
 // initConfig 初始化加载配置
@@ -92,6 +111,13 @@ func initConfig() {
 	configOnce.Do(func() {
 		if err := LoadConfig(); err != nil {
 			fmt.Printf("加载配置失败: %v，使用默认配置\n", err)
+		}
+		if Config.MonitorDirs == nil {
+			Config.MonitorDirs = make(map[int][]string)
+		}
+		// 启动时根据 autoStart 决定是否启动定时器
+		if Config.AutoStart && Config.Interval > 0 {
+			StartTimer(Config.Interval)
 		}
 	})
 }
