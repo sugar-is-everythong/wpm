@@ -94,7 +94,7 @@
             {#snippet ll()}
 
                 <div style="display: flex; align-items:center; gap:3px; font-family: 'hxb', sans-serif;">
-                    <a href="/" use:route style="display: flex;align-items: center">
+                    <a href="/#/" use:route style="display: flex;align-items: center">
                         <svg t="1782308980340" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8478"
                              width="20" height="20">
                             <path d="M224.32 505.6a31.936 31.936 0 0 1 10.88-19.84l222.08-222.08a32 32 0 0 1 45.12 45.12l-169.28 169.28H768a32 32 0 0 1 0 64H333.12l169.28 169.28a32 32 0 1 1-45.12 45.44l-224-224a31.968 31.968 0 0 1-8.96-27.2z"

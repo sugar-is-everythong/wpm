@@ -25,7 +25,7 @@ func initWindow() {
 		BackgroundType:   1,
 		Frameless:        true,
 		BackgroundColour: application.NewRGBA(6, 7, 15, 0),
-		URL:              "/tip",
+		URL:              "/#/tip",
 		DisableResize:    true,
 		Windows: application.WindowsWindow{
 			HiddenOnTaskbar:                   true,

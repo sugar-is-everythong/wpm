@@ -100,7 +100,7 @@
 
     <div class="bottom-box">
         <button onclick={viewSm} title="使用说明">🔖</button>
-        <a title="设置页面" href="/config" use:route>⚙</a>
+        <a title="设置页面" href="/#/config" use:route>⚙</a>
     </div>
 </main>
 

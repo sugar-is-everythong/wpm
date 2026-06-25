@@ -10,11 +10,11 @@
     <Installer
         Path="wpm.exe"
         Arguments=""
-        InstallLocation="C:\Program Files\My Company\My Product">
+        InstallLocation="C:\Program Files\My Company\塞壁纸">
     </Installer>
     <PackageInformation
-        PackageName="My Product"
-        PackageDisplayName="My Product"
+        PackageName="wpm"
+        PackageDisplayName="塞壁纸"
         PublisherName="CN=My Company"
         PublisherDisplayName="My Company"
         Version="0.1.0.0"
@@ -27,7 +27,7 @@
             <Application
                 Id="com.example.wpm"
                 Description="A wpm application"
-                DisplayName="My Product"
+                DisplayName="塞壁纸"
                 ExecutableName="wpm.exe"
                 EntryPoint="Windows.FullTrustApplication">
                 
@@ -41,7 +41,7 @@
         </Dependencies>
         <Properties>
             <Framework>false</Framework>
-            <DisplayName>My Product</DisplayName>
+            <DisplayName>塞壁纸</DisplayName>
             <PublisherDisplayName>My Company</PublisherDisplayName>
             <Description>A wpm application</Description>
             <Logo>Assets\AppIcon.png</Logo>
