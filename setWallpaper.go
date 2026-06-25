@@ -89,7 +89,7 @@ func doSwitch(monitorIndex int) {
 		return
 	}
 
-	if err := setPosition(dw, 4); err != nil {
+	if err := setPosition(dw, int32(Config.WallpaperFit)); err != nil {
 		fmt.Printf("设置填充模式失败: %v\n", err)
 		return
 	}

@@ -1,5 +1,5 @@
 <script>
-    let {options, value = $bindable()} = $props()
+    let {options, value = $bindable(), onchange} = $props()
     let showText = $state('')
     let inputFocused = $state(false)
     let dropUp = $state(false)
@@ -34,7 +34,8 @@
                {onfocus}
                {onblur}
         >
-        <svg t="1782310007533" class="icon" class:icon-open={inputFocused} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8671" width="10"
+        <svg t="1782310007533" class="icon" class:icon-open={inputFocused} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+             p-id="8671" width="10"
              height="10">
             <path d="M0 749.136842L512 237.136842 1024 746.442105l-37.726316 37.726316L512 309.894737l-474.27368399 476.968421L0 749.136842zM0 749.136842"
                   p-id="8672"></path>
@@ -44,7 +45,7 @@
     <div class="options" class:show-options={inputFocused} class:drop-up={dropUp}>
         <div class="aa">
             {#each options as {text, value: ov} ,index (ov)}
-                <p onclick={()=> {value=ov}}>{text}</p>
+                <p onclick={()=> { value=ov; onchange?.(ov); }}>{text}</p>
             {/each}
         </div>
     </div>
@@ -52,13 +53,15 @@
 
 <style lang="scss">
     .select-box {
-        --bw: 220px;
+        --bw: 180px;
 
         position: relative;
         width: var(--box-width, var(--bw));
 
-
         .input {
+            cursor: default;
+            font-size: 14px;
+            height: 28px;
         }
     }
 
@@ -104,10 +107,12 @@
             transition: .1s ease;
             text-align: center;
             font-weight: 350;
+            margin: 3px 0;
         }
 
         p:hover {
-            background-color: var(--main-6);
+            background-color: var(--main-4);
+            color: #fff;
         }
     }
 

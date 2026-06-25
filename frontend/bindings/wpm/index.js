@@ -11,5 +11,6 @@ export {
 
 export {
     AppConfig,
-    SwitchStrategy
+    SwitchStrategy,
+    WallpaperFit
 } from "./models.js";

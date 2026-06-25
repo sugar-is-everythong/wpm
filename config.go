@@ -17,6 +17,18 @@ const (
 	SwitchMouseScreen                       // 切换鼠标所在屏幕
 )
 
+// WallpaperFit 壁纸应用模式
+type WallpaperFit int
+
+const (
+	FitCenter  WallpaperFit = iota // 0 居中
+	FitTile                        // 1 平铺
+	FitStretch                     // 2 拉伸
+	FitFit                         // 3 适应
+	FitFill                        // 4 填充
+	FitSpan                        // 5 跨屏
+)
+
 // AppConfig 应用配置
 type AppConfig struct {
 	AutoStart           bool             `json:"autoStart"`           // 程序启动后是否立即执行定时切换
@@ -26,6 +38,8 @@ type AppConfig struct {
 	RegisterContextMenu bool             `json:"registerContextMenu"` // 是否注册到系统右键菜单
 	MonitorDirs         map[int][]string `json:"monitorDirs"`         // 每个显示器的壁纸目录
 	Interval            int              `json:"interval"`            // 切换间隔（分钟）
+	AutoMatchRatio      bool             `json:"autoMatchRatio"`      // 自动匹配显示器比例
+	WallpaperFit        WallpaperFit     `json:"wallpaperFit"`        // 壁纸应用模式
 }
 
 // Config 全局配置实例
@@ -37,6 +51,8 @@ var Config = AppConfig{
 	RegisterContextMenu: true,
 	MonitorDirs:         make(map[int][]string),
 	Interval:            30,
+	AutoMatchRatio:      true,
+	WallpaperFit:        FitFill,
 }
 
 var configOnce sync.Once
@@ -92,6 +108,8 @@ func (c *ConfigService) SaveAppConfig(cfg AppConfig) error {
 	Config.RecursiveDir = cfg.RecursiveDir
 	Config.Strategy = cfg.Strategy
 	Config.RegisterContextMenu = cfg.RegisterContextMenu
+	Config.AutoMatchRatio = cfg.AutoMatchRatio
+	Config.WallpaperFit = cfg.WallpaperFit
 	return SaveConfig()
 }
 

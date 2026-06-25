@@ -3,6 +3,7 @@
     import {Dialogs, Screens, Window} from "@wailsio/runtime";
     import {route} from "@mateothegreat/svelte5-router";
     import {ConfigService} from "~/index.js";
+    import ShowOK from "@/lib/ShowOK.svelte";
 
     let display = $state(0);
     let dirMap = $state({}); // { 0: ["C:/Images", "D:/Photos"], 1: [] }
@@ -45,7 +46,7 @@
         dirMap[monitorIndex] = dirMap[monitorIndex].filter((_, i) => i !== dirIndex);
         change = true
     }
-    
+
     // 确定设置
     const okSet = async () => {
         const dirs = {};
@@ -79,7 +80,7 @@
     <div class="top">
         <WindowTopBar>
             {#snippet ll()}
-                <div style="padding-left: 15px;font-size: 14px">塞壁纸</div>
+                <div style="padding-left: 15px;font-size: 14px;font-family: 'hxb', sans-serif;">塞壁纸</div>
             {/snippet}
         </WindowTopBar>
     </div>
@@ -88,14 +89,21 @@
         {#each display as d, i}
             <div class="d-s">
                 <div class="d-s-title" style:color={d.IsPrimary?'var(--main-4)':''}>
-                    🖥️ 显示器 {i + 1}
-                    <span> 宽：{d.Size.Width } 高：{d.Size.Height} | {d.Size.Width > d.Size.Height ? '横' : '纵'}
-                        向显示器</span>
+                    <img src="/dmcz.png" alt="" height="20px">
+                    <div>显示器 {i + 1}</div>
+                    <span>
+                        宽：{d.Size.Width } 高：{d.Size.Height} | {d.Size.Width > d.Size.Height ? '横' : '纵'}
+                        向显示器
+                    </span>
                 </div>
+
                 <div class="select">
                     <input type="number" placeholder="切换间隔(分钟)" bind:value={interval} onchange={()=> {change=true}}>
                     <span class="input-tip" title="设置壁纸自动切换的时间间隔，单位为分钟">⚠</span>
-                    <button class="dir-add" onclick={() => openDir(i)}>选择目录</button>
+                    <button class="dir-add" onclick={() => openDir(i)}>
+                        <img src="wfjmjw.png" alt="" height="19px">
+                        选择
+                    </button>
                 </div>
 
                 <div class="d-s-dirs">
@@ -110,13 +118,7 @@
         {/each}
     </div>
 
-    {#if change}
-        <div class="o-c-box">
-            <button class="ok" onclick={okSet}>确定</button>
-            <button onclick={cancel}>取消</button>
-        </div>
-    {/if}
-
+    <ShowOK show={change} ok={okSet} cancel={cancel}></ShowOK>
 
     <div class="bottom-box">
         <button onclick={viewSm} title="使用说明">🔖</button>
@@ -130,9 +132,8 @@
         display: grid;
         height: 100vh;
         grid-template-rows: 40px 1fr auto auto;
-        background-color: rgba(243, 243, 243, 0.8);
+        background-color: rgba(243, 243, 243, 0.92);
         border-radius: 4px;
-        font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
     }
 
     .set-box {
@@ -153,10 +154,15 @@
             // 显示器标题
             .d-s-title {
                 user-select: none;
+                display: flex;
+                gap: 10px;
+                align-items: flex-end;
+                font-family: 'hxb', sans-serif;
 
                 span {
                     font-size: 13px;
                     color: var(--text-5);
+                    transform: translateY(-1px);
                 }
             }
 
@@ -191,6 +197,13 @@
                 .dir-add {
                     position: sticky;
                     left: 9999px;
+                    border-radius: 3px;
+                    border: 1px #ccc solid;
+                    padding: 3px 10px;
+                    transition: 0.1s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
                 }
             }
 
@@ -244,27 +257,6 @@
 
             }
 
-        }
-    }
-
-    .o-c-box {
-        padding: 5px 10px;
-        padding-bottom: 10px;
-        display: flex;
-        flex-direction: row-reverse;
-        gap: 10px;
-
-        button {
-            padding: 5px 20px;
-            border-radius: 5px;
-            transition: background-color .1s ease;
-            border: 1px solid #ccc;
-        }
-
-        .ok {
-            background-color: var(--main-3);
-            border: 1px solid transparent;
-            color: #fff;
         }
     }
 

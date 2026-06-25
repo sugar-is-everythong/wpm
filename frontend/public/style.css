@@ -66,6 +66,14 @@ html, body {
     outline: none;
 }
 
+@font-face {
+    font-family: "hxb";
+    font-weight: normal;
+    src: url("HuXiaoBoNanShenTi-2.otf") format("opentype");
+    font-display: swap;
+}
+
+
 ul, ol {
     list-style: none;
 }
@@ -90,14 +98,13 @@ input:not([type="radio"]), textarea, select {
     border-radius: 6px;
     font-size: 15px;
     /*background-color: #f3f3f4;*/
-    transition: background-color .3s ease,
-    box-shadow .3s ease,
-    border-color .3s ease;
+    transition: background-color .3s ease,986
+    box-shadow .3s ease;
 }
 
 input:not([type="radio"]):focus, textarea:focus {
     outline: none;
-    border-color: var(--main-3);
+    /*border-color: var(--main-3);*/
     background-color: #fff;
     /*box-shadow: 0 -1px 0 1px var(--main-4) inset;*/
     border-bottom: 2px solid var(--main-4);
@@ -105,7 +112,7 @@ input:not([type="radio"]):focus, textarea:focus {
 
 input:not([type="radio"]):hover, textarea:hover {
     outline: none;
-    border-color: var(--main-3);
+    /*border-color: var(--main-3);*/
     background-color: #fff;
     border-bottom: 2px solid var(--main-4);
     /*box-shadow: 0 -1px 0 1px var(--main-4) inset;*/
