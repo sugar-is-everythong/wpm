@@ -12,9 +12,10 @@ import (
 type SwitchStrategy int
 
 const (
-	SwitchRandom      SwitchStrategy = iota // 随机屏幕切换
-	SwitchSequential                        // 顺序屏幕切换
-	SwitchMouseScreen                       // 切换鼠标所在屏幕
+	SwitchAllMonitors SwitchStrategy = iota // 0 协同切换（所有显示器同时切换）
+	SwitchSequential                        // 1 顺序切换
+	SwitchRandom                            // 2 随机切换
+	SwitchMouseScreen                       // 3 鼠标所在屏幕
 )
 
 // WallpaperFit 壁纸应用模式
@@ -32,7 +33,6 @@ const (
 // AppConfig 应用配置
 type AppConfig struct {
 	AutoStart           bool             `json:"autoStart"`           // 程序启动后是否立即执行定时切换
-	SwitchAllMonitor    bool             `json:"switchAllMonitor"`    // 自动切换时是否同时切换所有显示器
 	RecursiveDir        bool             `json:"recursiveDir"`        // 扫描壁纸目录时是否递归子目录
 	Strategy            SwitchStrategy   `json:"strategy"`            // 自动切换策略
 	RegisterContextMenu bool             `json:"registerContextMenu"` // 是否注册到系统右键菜单
@@ -45,7 +45,6 @@ type AppConfig struct {
 // Config 全局配置实例
 var Config = AppConfig{
 	AutoStart:           true,
-	SwitchAllMonitor:    false,
 	RecursiveDir:        true,
 	Strategy:            SwitchMouseScreen,
 	RegisterContextMenu: true,
@@ -101,26 +100,20 @@ func (c *ConfigService) GetConfig() AppConfig {
 	return Config
 }
 
-// SaveAppConfig 保存通用配置
-func (c *ConfigService) SaveAppConfig(cfg AppConfig) error {
-	Config.AutoStart = cfg.AutoStart
-	Config.SwitchAllMonitor = cfg.SwitchAllMonitor
-	Config.RecursiveDir = cfg.RecursiveDir
-	Config.Strategy = cfg.Strategy
-	Config.RegisterContextMenu = cfg.RegisterContextMenu
-	Config.AutoMatchRatio = cfg.AutoMatchRatio
-	Config.WallpaperFit = cfg.WallpaperFit
-	return SaveConfig()
-}
-
-// SaveMonitorConfig 保存显示器目录和间隔配置，并重启定时任务
-func (c *ConfigService) SaveMonitorConfig(monitorDirs map[int][]string, interval int) error {
-	Config.MonitorDirs = monitorDirs
-	Config.Interval = interval
+// Save 保存完整配置，同时重启定时器
+func (c *ConfigService) Save(cfg AppConfig) error {
+	prevInterval := Config.Interval
+	Config = cfg
+	if Config.MonitorDirs == nil {
+		Config.MonitorDirs = make(map[int][]string)
+	}
 	if err := SaveConfig(); err != nil {
 		return err
 	}
-	RestartTimer()
+	// 间隔变化时重启定时器
+	if Config.Interval != prevInterval || Config.Interval > 0 {
+		RestartTimer()
+	}
 	return nil
 }
 

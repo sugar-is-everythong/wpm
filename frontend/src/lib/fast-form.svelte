@@ -93,9 +93,7 @@
 
             .item-label {
                 font-size: 14px;
-                font-weight: 500;
-                font-family: 'hxb', sans-serif;
-                color: var(--text-2);
+                font-weight: 600;
             }
 
             .item-desc {

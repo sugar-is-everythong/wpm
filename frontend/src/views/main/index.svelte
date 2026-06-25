@@ -2,30 +2,19 @@
     import WindowTopBar from "@/lib/windowTopBar/index.svelte";
     import {Dialogs, Screens, Window} from "@wailsio/runtime";
     import {route} from "@mateothegreat/svelte5-router";
-    import {ConfigService} from "~/index.js";
     import ShowOK from "@/lib/ShowOK.svelte";
+    import {appConfig, saveConfig} from "@/lib/config.svelte.js";
 
     let display = $state(0);
-    let dirMap = $state({}); // { 0: ["C:/Images", "D:/Photos"], 1: [] }
-    let interval = $state(30);
-    let change = $state(false);// 修改标志用于显示确认按钮
+    let change = $state(false);
 
     Window.SetAlwaysOnTop(true);
     (() => {
         Screens.GetAll().then((screens) => {
             display = screens;
             for (let i = 0; i < screens.length; i++) {
-                if (!dirMap[i]) dirMap[i] = [];
+                if (!appConfig.monitorDirs[i]) appConfig.monitorDirs[i] = [];
             }
-            // 加载配置
-            ConfigService.GetConfig().then(cfg => {
-                interval = cfg.interval || 30;
-                if (cfg.monitorDirs) {
-                    for (let i = 0; i < screens.length; i++) {
-                        dirMap[i] = cfg.monitorDirs[String(i)] || cfg.monitorDirs[i] || [];
-                    }
-                }
-            });
         });
     })()
 
@@ -36,44 +25,33 @@
             CanChooseFiles: false,
         })
         if (res && res.length > 0) {
-            dirMap[monitorIndex] = [...(dirMap[monitorIndex] || []), ...res];
+            appConfig.monitorDirs[monitorIndex] = [...(appConfig.monitorDirs[monitorIndex] || []), ...res];
         }
         change = true
     }
 
-    // 移除目录
     const removeDir = (monitorIndex, dirIndex) => {
-        dirMap[monitorIndex] = dirMap[monitorIndex].filter((_, i) => i !== dirIndex);
+        appConfig.monitorDirs[monitorIndex] = appConfig.monitorDirs[monitorIndex].filter((_, i) => i !== dirIndex);
         change = true
     }
 
-    // 确定设置
     const okSet = async () => {
-        const dirs = {};
-        for (let i = 0; i < display.length; i++) {
-            dirs[i] = dirMap[i] || [];
-        }
         try {
-            await ConfigService.SaveMonitorConfig(dirs, interval);
+            await saveConfig();
             change = false;
         } catch (e) {
             console.error("保存失败:", e);
         }
     }
 
-    const cancel = () => {
-        ConfigService.GetConfig().then(cfg => {
-            interval = cfg.interval || 30;
-            for (let i = 0; i < display.length; i++) {
-                dirMap[i] = cfg.monitorDirs?.[String(i)] || cfg.monitorDirs?.[i] || [];
-            }
-            change = false;
-        });
+    const cancel = async () => {
+        const {ConfigService} = await import('~/index.js')
+        const res = await ConfigService.GetConfig()
+        Object.assign(appConfig, res)
+        change = false;
     }
 
-    // 查看说明
-    const viewSm = () => {
-    }
+    const viewSm = () => {}
 </script>
 
 <main class="main-box">
@@ -98,7 +76,7 @@
                 </div>
 
                 <div class="select">
-                    <input type="number" placeholder="切换间隔(分钟)" bind:value={interval} onchange={()=> {change=true}}>
+                    <input type="number" placeholder="切换间隔(分钟)" bind:value={appConfig.interval} onchange={()=> {change=true}}>
                     <span class="input-tip" title="设置壁纸自动切换的时间间隔，单位为分钟">⚠</span>
                     <button class="dir-add" onclick={() => openDir(i)}>
                         <img src="wfjmjw.png" alt="" height="19px">
@@ -107,7 +85,7 @@
                 </div>
 
                 <div class="d-s-dirs">
-                    {#each (dirMap[i] || []) as dir, j}
+                    {#each (appConfig.monitorDirs[i] || []) as dir, j}
                         <div class="dir-item">
                             <span class="dir-path" title={dir}> {dir} </span>
                             <button class="dir-del" onclick={() => removeDir(i, j)}>✕</button>

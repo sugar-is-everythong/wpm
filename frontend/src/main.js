@@ -1,4 +1,7 @@
 import { mount } from 'svelte'
 import App from './App.svelte'
+import { loadConfig } from './lib/config.svelte.js'
 
-mount(App, { target: document.getElementById("app") })
+loadConfig().then(() => {
+    mount(App, { target: document.getElementById("app") })
+})

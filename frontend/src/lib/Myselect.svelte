@@ -30,7 +30,8 @@
 
 <div class="select-box" bind:this={boxEl}>
     <div class="input-container">
-        <input class="input" type="text" placeholder="" bind:value={showText}
+        <input class="input" type="text" placeholder="" readonly
+               bind:value={showText}
                {onfocus}
                {onblur}
         >
@@ -62,6 +63,7 @@
             cursor: default;
             font-size: 14px;
             height: 28px;
+            text-align: center;
         }
     }
 

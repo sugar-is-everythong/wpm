@@ -1,21 +1,11 @@
 <script>
     import WindowTopBar from "@/lib/windowTopBar/index.svelte";
-    import {ConfigService} from "~/index.js";
     import {route} from "@mateothegreat/svelte5-router";
     import FastForm from "@/lib/fast-form.svelte";
     import ShowOK from "@/lib/ShowOK.svelte";
+    import {appConfig, saveConfig} from "@/lib/config.svelte.js";
 
-    let cfg = $state({
-        autoStart: true,
-        switchAllMonitor: false,
-        recursiveDir: true,
-        strategy: 2,
-        registerContextMenu: true,
-        autoMatchRatio: true,
-        wallpaperFit: 4,
-    });
     let change = $state(false);
-
     const markChange = () => {
         change = true;
     };
@@ -23,92 +13,79 @@
     const formItems = $derived({
         autoStart: {
             label: "启动后立即执行", desc: "程序启动时是否立即切换一次壁纸",
-            mode: 'toggle', value: cfg.autoStart,
+            mode: 'toggle', value: appConfig.autoStart,
             onchange: (v) => {
-                cfg.autoStart = v;
-                markChange();
-            }
-        },
-        switchAllMonitor: {
-            label: "协同切换", desc: "自动切换时是否同时切换所有显示器壁纸",
-            mode: 'toggle', value: cfg.switchAllMonitor,
-            onchange: (v) => {
-                cfg.switchAllMonitor = v;
+                appConfig.autoStart = v;
                 markChange();
             }
         },
         strategy: {
             label: "切换策略", desc: "屏幕切换的方式",
-            mode: 'select', value: cfg.strategy,
-            hidden: cfg.switchAllMonitor,
-            options: [{value: 0, text: "随机屏幕切换"}, {value: 1, text: "顺序屏幕切换"}, {value: 2, text: "鼠标所在屏幕"}],
+            mode: 'select', value: appConfig.strategy,
+            options: [
+                {value: 0, text: "协同切换"}, {value: 1, text: "顺序屏幕切换"},
+                {value: 2, text: "随机屏幕切换"}, {value: 3, text: "鼠标所在屏幕"}
+            ],
             onchange: (v) => {
-                cfg.strategy = v;
+                appConfig.strategy = v;
                 markChange();
             }
         },
         recursiveDir: {
-            label: "目录递归扫描", desc: "扫描壁纸目录时会一直向下找到所有图片随机设置壁纸",
-            mode: 'toggle', value: cfg.recursiveDir,
+            label: "目录递归扫描", desc: "扫描壁纸目录时会一直向下找到所有图片",
+            mode: 'toggle', value: appConfig.recursiveDir,
             onchange: (v) => {
-                cfg.recursiveDir = v;
+                appConfig.recursiveDir = v;
                 markChange();
             }
         },
         registerContextMenu: {
             label: "注册右键菜单", desc: "是否将程序注册到系统右键菜单",
-            mode: 'toggle', value: cfg.registerContextMenu,
+            mode: 'toggle', value: appConfig.registerContextMenu,
             onchange: (v) => {
-                cfg.registerContextMenu = v;
+                appConfig.registerContextMenu = v;
                 markChange();
             }
         },
         autoMatchRatio: {
-            label: "自动匹配显示器比例", desc: "切换壁纸时自动过滤与显示器宽高比例相近的图片",
-            mode: 'toggle', value: cfg.autoMatchRatio,
+            label: "自动匹配显示器比例", desc: "切换壁纸时自动过滤与显示器比例相近的图片",
+            mode: 'toggle', value: appConfig.autoMatchRatio,
             onchange: (v) => {
-                cfg.autoMatchRatio = v;
+                appConfig.autoMatchRatio = v;
                 markChange();
             }
         },
         wallpaperFit: {
             label: "壁纸应用模式", desc: "壁纸在显示器上的裁剪拉伸方式",
-            mode: 'select', value: cfg.wallpaperFit,
-            hidden:cfg.autoMatchRatio,
-            options: [{value: 0, text: "居中"}, {value: 1, text: "平铺"}, {value: 2, text: "拉伸"}, {value: 3, text: "适应"}, {
-                value: 4,
-                text: "填充"
-            }, {value: 5, text: "跨屏"}],
+            mode: 'select', value: appConfig.wallpaperFit,
+            hidden: appConfig.autoMatchRatio,
+            options: [
+                {value: 0, text: "居中"}, {value: 1, text: "平铺"}, {value: 2, text: "拉伸"},
+                {value: 3, text: "适应"}, {value: 4, text: "填充"}, {value: 5, text: "跨屏"}
+            ],
             onchange: (v) => {
-                cfg.wallpaperFit = v;
+                appConfig.wallpaperFit = v;
                 markChange();
             }
         },
     });
 
-    // 加载配置
-    (() => {
-        ConfigService.GetConfig().then(res => {
-            Object.assign(cfg, res);
-        });
-    })();
-
     const save = async () => {
         try {
-            await ConfigService.SaveAppConfig(cfg);
+            await saveConfig();
             change = false;
         } catch (e) {
             console.error("保存配置失败:", e);
         }
     };
 
-    const cancel = () => {
-        ConfigService.GetConfig().then(res => {
-            Object.assign(cfg, res);
-            change = false;
-        });
+    // 取消：重新从 Go 加载覆盖本地修改
+    const cancel = async () => {
+        const {ConfigService} = await import('~/index.js')
+        const res = await ConfigService.GetConfig()
+        Object.assign(appConfig, res)
+        change = false;
     };
-
 </script>
 
 <main class="config-box">
