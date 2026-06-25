@@ -1,12 +1,14 @@
 <script>
-    import {GetDisplay, GetScreenNum} from '~/greetservice.js'
-    import {Window} from "@wailsio/runtime";
+    import {GetDisplay} from '~/greetservice.js'
+    import {Screens, Window} from "@wailsio/runtime";
 
     const opts = $state([
         [{
             label: '切换所有', icon: "🗘", color: 'var(--main-1)',
             click() {
-                GetDisplay()
+                GetDisplay().then((data)=> {
+                    console.log(data)
+                })
             }
         }], [],
         [
@@ -15,7 +17,8 @@
     ]);
 
     (() => {
-        GetScreenNum().then((num) => {
+        Screens.GetAll().then((obj) => {
+            const num = obj.length
             for (let i = 0; i < num; i++) {
                 opts[1].push({label: `切换屏幕${i + 1}`, icon: "🗘"})
             }
@@ -52,13 +55,13 @@
     .tip-view {
         background-color: rgb(255 255 255 / 0.95);
         backdrop-filter: blur(10px);
-        border-radius: 10px;
+        border-radius: 4px;
         font-size: 13px;
         padding: 4px 10px;
         cursor: pointer;
         user-select: none;
         margin: 10px;
-        box-shadow: 0 0 10px rgb(166 166 166 / 0.8), 0 0 5px rgb(166 166 166 / 0.8);
+        box-shadow: 0 0 5px rgb(166 166 166 / 0.8);
 
         ::-webkit-scrollbar {
             display: none;

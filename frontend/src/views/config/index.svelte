@@ -20,7 +20,7 @@
             }
         },
         strategy: {
-            label: "切换策略", desc: "屏幕切换的方式",
+            label: "切换策略", desc: "屏幕切换的方式，协同切换会使用所有已选择的目录",
             mode: 'select', value: appConfig.strategy,
             options: [
                 {value: 0, text: "协同切换"}, {value: 1, text: "顺序屏幕切换"},

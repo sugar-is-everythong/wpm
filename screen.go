@@ -9,11 +9,15 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-type GreetService struct{}
+type GreetService struct {
+}
 
 var (
 	CLSID_DesktopWallpaper = ole.NewGUID("C2CF3110-460E-4FC1-B9D0-8A1C0C9CC4BD")
 	IID_IDesktopWallpaper  = ole.NewGUID("B92B56A9-8B55-4E14-9A89-0199BBB6F93B")
+
+	// displayMap 缓存所有显示器，key 为索引，程序启动时加载
+	displayMap = make(map[int]string)
 )
 
 // IDesktopWallpaper 接口方法索引（相对于 IUnknown 3 个方法之后）
@@ -33,15 +37,8 @@ const (
 	idwEnable                    = 11
 )
 
-func (g *GreetService) GetScreenNum() int {
-	s := App.Screen.GetAll()
-	for _, screen := range s {
-		fmt.Printf("%+v\n", screen)
-	}
-	return len(s)
-}
-
-func (g *GreetService) GetDisplay() {
+// initDisplayMap 程序启动时调用，缓存所有显示器信息到 displayMap
+func initDisplayMap() {
 	// 初始化 COM，使用单线程单元（STA），与 C# 的 [STAThread] 等价
 	if err := ole.CoInitializeEx(0, ole.COINIT_APARTMENTTHREADED|ole.COINIT_DISABLE_OLE1DDE); err != nil {
 		log.Fatalf("CoInitializeEx failed: %v", err)
@@ -62,23 +59,26 @@ func (g *GreetService) GetDisplay() {
 	}
 	defer dw.Release()
 
-	count, err := getMonitorCount(dw)
+	num, err := getMonitorCount(dw)
 	if err != nil {
-		log.Fatalf("GetMonitorDevicePathCount failed: %v", err)
+		log.Fatalf("GetMonitorCount 错误: %v", err)
 	}
-
-	fmt.Printf("检测到 %d 台显示器:\n", count)
-	for i := uint32(0); i < count; i++ {
+	for i := uint32(0); i < num; i++ {
 		monitorID, err := getMonitorDevicePathAt(dw, i)
 		if err != nil {
 			log.Printf("  显示器 %d: 获取失败: %v", i, err)
 			continue
 		}
-		fmt.Printf("  显示器 %d: %s\n", i, monitorID)
+		displayMap[int(i)] = monitorID
+		fmt.Printf("缓存显示器 %d: %s %v\n", i, monitorID, displayMap[int(i)])
 	}
 }
 
-// getMonitorCount 调用 IDesktopWallpaper::GetMonitorDevicePathCount
+func (g *GreetService) GetDisplay() map[int]string {
+	return displayMap
+}
+
+// getMonitorCount 获取显示器数量 调用 IDesktopWallpaper::GetMonitorDevicePathCount
 func getMonitorCount(dw *ole.IDispatch) (uint32, error) {
 	var count uint32
 	if err := comCall(dw, idwGetMonitorDevicePathCount, uintptr(unsafe.Pointer(&count))); err != nil {
@@ -87,7 +87,7 @@ func getMonitorCount(dw *ole.IDispatch) (uint32, error) {
 	return count, nil
 }
 
-// getMonitorDevicePathAt 调用 IDesktopWallpaper::GetMonitorDevicePathAt
+// getMonitorDevicePathAt 获取显示器设备路径/ID 调用 IDesktopWallpaper::GetMonitorDevicePathAt
 // 返回的字符串需要用 CoTaskMemFree 释放
 func getMonitorDevicePathAt(dw *ole.IDispatch, index uint32) (string, error) {
 	var monitorID *uint16

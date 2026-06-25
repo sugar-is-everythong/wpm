@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"time"
 
 	"log"
 
@@ -17,6 +18,8 @@ var (
 )
 
 func main() {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
+	go initDisplayMap() // 缓存显示器信息，不知道为啥放在后面就不好使，除非延迟一下，可能和wails的初始化有冲突
 
 	app := application.New(application.Options{
 		Name:        "塞壁纸",
@@ -32,7 +35,11 @@ func main() {
 		ShouldQuit: ShouldQuit,
 	})
 	App = app
-	initConfig()           // 加载配置
+	initConfig() // 加载配置
+
+	go func() {
+		time.Sleep(5 * time.Second)
+	}()
 	app.Show()
 
 	initWindow()           // 创建并初始化窗口

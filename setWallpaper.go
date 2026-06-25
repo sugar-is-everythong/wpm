@@ -16,18 +16,16 @@ var sequentialIndex = make(map[int]int)
 // switchWallpaper 根据策略切换壁纸
 func switchWallpaper() {
 	switch Config.Strategy {
-	case SwitchAllMonitors:
-		// 所有显示器同时切换
+	case SwitchAllMonitors: // 所有显示器同时切换
 		for idx := range Config.MonitorDirs {
 			doSwitch(idx)
 		}
-	case SwitchMouseScreen:
+	case SwitchMouseScreen: // 鼠标所在显示器切换
 		idx := getDisplayIndex()
 		if idx >= 0 {
 			doSwitch(idx)
 		}
-	case SwitchSequential:
-		// 每次只切换一个显示器，按顺序轮转
+	case SwitchSequential: // 每次只切换一个显示器，按顺序轮转
 		keys := make([]int, 0, len(Config.MonitorDirs))
 		for k := range Config.MonitorDirs {
 			keys = append(keys, k)
@@ -37,8 +35,7 @@ func switchWallpaper() {
 			sequentialIndex[0]++
 			doSwitch(idx)
 		}
-	case SwitchRandom:
-		// 随机选一个显示器切换
+	case SwitchRandom: // 随机选一个显示器切换
 		if len(Config.MonitorDirs) == 0 {
 			return
 		}
@@ -60,7 +57,7 @@ func doSwitch(monitorIndex int) {
 	}
 
 	var imagePath string
-	if Config.Strategy == SwitchSequential {
+	if Config.Strategy == SwitchSequential { // 按顺序切换
 		idx := sequentialIndex[monitorIndex] % len(images)
 		imagePath = images[idx]
 		sequentialIndex[monitorIndex] = idx + 1
