@@ -57,6 +57,10 @@ func switchWallpaper() {
 		if len(s) == 0 {
 			return
 		}
+        if len(s)<=0{
+            return
+        }
+
 		doSwitch(s[rand.Intn(len(s))])
 	}
 }

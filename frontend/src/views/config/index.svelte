@@ -19,18 +19,18 @@
                 markChange();
             }
         },
-        strategy: {
+ /*       strategy: {
             label: "切换策略", desc: "屏幕切换的方式，协同切换会使用所有已选择的目录",
             mode: 'select', value: appConfig.strategy,
             options: [
                 {value: 0, text: "协同切换"}, {value: 1, text: "顺序屏幕切换"},
-                {value: 2, text: "随机屏幕切换"},/* {value: 3, text: "鼠标所在屏幕"}*/
+                {value: 2, text: "随机屏幕切换"},/!* {value: 3, text: "鼠标所在屏幕"}*!/
             ],
             onchange: (v) => {
                 appConfig.strategy = v;
                 markChange();
             }
-        },
+        },*/
         recursiveDir: {
             label: "目录递归扫描", desc: "扫描壁纸目录时会一直向下找到所有图片",
             mode: 'toggle', value: appConfig.recursiveDir,
@@ -39,14 +39,14 @@
                 markChange();
             }
         },
-        registerContextMenu: {
+     /*   registerContextMenu: {
             label: "注册右键菜单", desc: "是否将程序注册到系统右键菜单",
             mode: 'toggle', value: appConfig.registerContextMenu,
             onchange: (v) => {
                 appConfig.registerContextMenu = v;
                 markChange();
             }
-        },
+        },*/
         autoMatchRatio: {
             label: "自动匹配显示器比例", desc: "切换壁纸时自动过滤与显示器比例相近的图片",
             mode: 'toggle', value: appConfig.autoMatchRatio,

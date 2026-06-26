@@ -1,36 +1,44 @@
 <script>
-    import {GetDisplay,ManualSwitch} from '~/greetservice.js'
-    import {Screens, Window} from "@wailsio/runtime";
+	import {GetDisplay, ManualSwitch} from '~/greetservice.js'
+	import {Screens, Window,Application} from "@wailsio/runtime";
 
-    const opts = $state([
-        [{
-            label: '切换所有', icon: "🗘", color: 'var(--main-1)',
-            click() {
-                GetDisplay().then((data) => {
-                    console.log(data)
-                })
-            }
-        }], [],
-        [
-            {label: '退出', icon: "×", color: "red"},
-        ]
-    ]);
+	const opts = $state([
+		[{
+			label: '切换所有', icon: "🗘", color: 'var(--main-1)',
+			click: () => {
+				GetDisplay().then((data) => {
+					for (const di in data) {
+						ManualSwitch(di | 0)
+					}
+				})
+			}
+		}], [],
+		[
+			{
+				label: '退出', icon: "×", color: "red",
+				click() {
+					console.log(111)
+					Application.Quit()
+				}
+			},
+		]
+	]);
 
-    (() => {
-        Screens.GetAll().then((obj) => {
-            const num = obj.length
-            for (let i = 0; i < num; i++) {
-                opts[1].push({
-                    label: `切换屏幕${i + 1}`, icon: "🗘", click: (di) => {
-                        ManualSwitch(di)
-                    }
-                })
-            }
+	(() => {
+		Screens.GetAll().then((obj) => {
+			const num = obj.length
+			for (let i = 0; i < num; i++) {
+				opts[1].push({
+					label: `切换屏幕${ i + 1 }`, icon: "🗘", click: (di) => {
+						ManualSwitch(di)
+					}
+				})
+			}
 
-            // 设置窗口大小
-            Window.SetSize(150, 127 + (num - 1) * 33)
-        })
-    })()
+			// 设置窗口大小
+			Window.SetSize(150, 127 + (num - 1) * 33)
+		})
+	})()
 </script>
 
 <main class="tip-view">

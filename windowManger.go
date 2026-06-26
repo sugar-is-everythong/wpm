@@ -26,7 +26,7 @@ func WindowEventsRegister() {
 	op, has := App.Window.GetByName("options window")
 	if has {
 		op.OnWindowEvent(events.Windows.WindowInactive, func(event *application.WindowEvent) {
-			//op.Hide()
+			op.Hide()
 		})
 	}
 }

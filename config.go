@@ -49,7 +49,7 @@ type AppConfig struct {
 
 // Config 全局配置实例
 var Config = AppConfig{
-	AutoStart:           true,
+	AutoStart:           false,
 	RecursiveDir:        true,
 	Strategy:            SwitchMouseScreen,
 	RegisterContextMenu: true,
