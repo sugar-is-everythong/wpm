@@ -9,7 +9,7 @@
     let change = $state(false);
     let oldConfig = JSON.parse(JSON.stringify(appConfig));
 
-    Window.SetAlwaysOnTop(true);
+    // Window.SetAlwaysOnTop(true);
     (() => {
         Screens.GetAll().then((screens) => {
             display = screens;
@@ -69,8 +69,7 @@
                     <img src="/dmcz.png" alt="" height="20px">
                     <div>显示器 {i + 1}</div>
                     <span>
-                        宽：{d.Size.Width } 高：{d.Size.Height} | {d.Size.Width > d.Size.Height ? '横' : '纵'}
-                        向显示器
+                        宽：{d.Size.Width } 高：{d.Size.Height} | {d.Size.Width > d.Size.Height ? '横' : '纵'}向显示器
                     </span>
                 </div>
 
@@ -98,7 +97,7 @@
     <ShowOK show={change} ok={okSet} cancel={cancel}></ShowOK>
 
     <div class="bottom-box">
-        <button onclick={viewSm} title="使用说明">🔖</button>
+        <button onclick={viewSm} title="使用说明"></button>
         <a title="设置页面" href="/#/config" use:route>⚙</a>
     </div>
 </main>

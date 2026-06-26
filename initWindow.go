@@ -9,6 +9,8 @@ func initWindow() {
 		Name:             "main window",
 		Width:            600,
 		Height:           450,
+		MinHeight:        450,
+		MinWidth:         600,
 		BackgroundColour: application.NewRGBA(6, 7, 15, 0),
 		Frameless:        true,
 		URL:              "/",

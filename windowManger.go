@@ -7,10 +7,17 @@ import (
 
 type WindowService struct{}
 
+var CanQuit = false
+
+func (g *GreetService) RealQuit() {
+	CanQuit = true
+	App.Hide()
+}
+
 // ShouldQuit 阻止程序退出
 func ShouldQuit() bool {
 	App.Hide()
-	return false
+	return CanQuit
 }
 
 // WindowEventsRegister 窗口事件注册，阻止窗口关闭
