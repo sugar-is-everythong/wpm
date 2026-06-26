@@ -11,7 +11,7 @@ var CanQuit = false
 
 func (g *GreetService) RealQuit() {
 	CanQuit = true
-	App.Hide()
+	App.Quit()
 }
 
 // ShouldQuit 阻止程序退出
