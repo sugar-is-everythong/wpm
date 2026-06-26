@@ -11,6 +11,14 @@
     };
 
     const formItems = $derived({
+        autoRun: {
+            label: "开机自启动", desc: "开机自立即执行",
+            mode: 'toggle', value: appConfig.autoRun,
+            onchange: (v) => {
+                appConfig.autoRun = v;
+                markChange();
+            }
+        },
         autoStart: {
             label: "启动后立即执行", desc: "程序启动时是否立即切换一次壁纸",
             mode: 'toggle', value: appConfig.autoStart,

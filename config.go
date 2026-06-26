@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"sync"
+
+	"golang.org/x/sys/windows/registry"
 )
 
 // SwitchStrategy 自动切换策略
@@ -44,6 +47,7 @@ type AppConfig struct {
 	RegisterContextMenu bool               `json:"registerContextMenu"` // 是否注册到系统右键菜单
 	MonitorDirs         map[int]preference `json:"monitorDirs"`         // 每个显示器的壁纸目录
 	AutoMatchRatio      bool               `json:"autoMatchRatio"`      // 自动匹配显示器比例
+	AutoRun             bool               `json:"autoRun"`             // 是否开机自启动
 	WallpaperFit        WallpaperFit       `json:"wallpaperFit"`        // 壁纸应用模式
 }
 
@@ -55,6 +59,7 @@ var Config = AppConfig{
 	RegisterContextMenu: true,
 	MonitorDirs:         make(map[int]preference),
 	AutoMatchRatio:      true,
+	AutoRun:             false,
 	WallpaperFit:        FitFill,
 }
 
@@ -136,6 +141,13 @@ func (c *ConfigService) Save(cfg AppConfig) error {
 		}
 	}
 
+	// 处理开机自启动
+	if Config.AutoRun {
+		Run()
+	} else {
+		RemoveAutoRun()
+	}
+
 	// TODO: 处理右键菜单注册/注销
 	return nil
 }
@@ -162,4 +174,47 @@ func initConfig() {
 			}
 		}
 	})
+}
+
+// Run 注册开机自启动
+func Run() {
+	appName := "塞壁纸"
+
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Println("获取可执行文件路径失败:", err)
+		return
+	}
+	absPath, err := filepath.Abs(exePath)
+	if err != nil {
+		log.Println("获取绝对路径失败:", err)
+		return
+	}
+
+	key, _, err := registry.CreateKey(registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Run`, registry.WRITE)
+	if err != nil {
+		log.Println("注册表打开失败:", err)
+		return
+	}
+	defer key.Close()
+
+	err = key.SetStringValue(appName, absPath)
+	if err != nil {
+		log.Println("设置自启动项失败:", err)
+		return
+	}
+}
+
+// RemoveAutoRun 移除开机自启动
+func RemoveAutoRun() {
+	appName := "塞壁纸"
+
+	key, err := registry.OpenKey(registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Run`, registry.WRITE)
+	if err != nil {
+		// 键不存在，无需处理
+		return
+	}
+	defer key.Close()
+
+	_ = key.DeleteValue(appName)
 }

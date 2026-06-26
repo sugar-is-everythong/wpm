@@ -9,6 +9,7 @@ export const appConfig = $state({
     autoMatchRatio: true,
     wallpaperFit: 4,
     monitorDirs: {}, // {dirs:[], d:0, interval:0} 文件目录、优先级、切换间隔
+    autoRun: false,
 })
 
 let loaded = false
