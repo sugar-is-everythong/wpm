@@ -41,9 +41,9 @@ func StartMonitorTimer(monitorIndex int, minutes int) {
 
 	job, err := scheduler.NewJob(
 		gocron.DurationJob(time.Duration(minutes)*time.Minute),
-		gocron.NewTask(func() {
-			switchWallpaper()
-		}),
+		gocron.NewTask(func(idx int) {
+			doSwitch(idx)
+		}, monitorIndex),
 	)
 	if err != nil {
 		fmt.Printf("创建显示器 %d 定时任务失败: %v\n", monitorIndex, err)

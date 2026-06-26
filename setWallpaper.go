@@ -19,6 +19,7 @@ func (g *GreetService) ManualSwitch(monitorIndex int) {
 }
 
 // switchWallpaper 根据策略切换壁纸
+// Deprecated: 已废弃，不再使用
 func switchWallpaper() {
 	// 每次都加载一下显示器的数量，防止显示器有变化，不过一般也没有变化
 	if len(App.Screen.GetAll()) != len(displayMap) {
@@ -52,6 +53,9 @@ func switchWallpaper() {
 			if len(dirs.Dirs) > 0 {
 				s = append(s, k)
 			}
+		}
+		if len(s) == 0 {
+			return
 		}
 		doSwitch(s[rand.Intn(len(s))])
 	}

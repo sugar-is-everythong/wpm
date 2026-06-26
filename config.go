@@ -151,7 +151,9 @@ func initConfig() {
 		}
 		// 启动时根据 autoStart 决定是否立即切换一次
 		if Config.AutoStart {
-			go switchWallpaper()
+			for k, _ := range displayMap {
+				go doSwitch(k)
+			}
 		}
 		// 根据各显示器的 Interval 启动独立定时器
 		for k, pref := range Config.MonitorDirs {
