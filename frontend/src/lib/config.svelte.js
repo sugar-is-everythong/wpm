@@ -8,8 +8,7 @@ export const appConfig = $state({
     registerContextMenu: true,
     autoMatchRatio: true,
     wallpaperFit: 4,
-    monitorDirs: {},
-    interval: 30,
+    monitorDirs: {}, // {dirs:[], d:0, interval:0} 文件目录、优先级、切换间隔
 })
 
 let loaded = false
@@ -21,7 +20,7 @@ export async function loadConfig() {
     if (loaded) return
     loaded = true
     const cfg = await ConfigService.GetConfig()
-    Object.assign(appConfig, cfg)
+    Object.assign(appConfig, structuredClone(cfg))
 }
 
 /**

@@ -1,12 +1,12 @@
 <script>
-    import {GetDisplay} from '~/greetservice.js'
+    import {GetDisplay,ManualSwitch} from '~/greetservice.js'
     import {Screens, Window} from "@wailsio/runtime";
 
     const opts = $state([
         [{
             label: '切换所有', icon: "🗘", color: 'var(--main-1)',
             click() {
-                GetDisplay().then((data)=> {
+                GetDisplay().then((data) => {
                     console.log(data)
                 })
             }
@@ -20,25 +20,24 @@
         Screens.GetAll().then((obj) => {
             const num = obj.length
             for (let i = 0; i < num; i++) {
-                opts[1].push({label: `切换屏幕${i + 1}`, icon: "🗘"})
+                opts[1].push({
+                    label: `切换屏幕${i + 1}`, icon: "🗘", click: (di) => {
+                        ManualSwitch(di)
+                    }
+                })
             }
 
             // 设置窗口大小
             Window.SetSize(150, 127 + (num - 1) * 33)
         })
     })()
-
-    const ioClick = (o) => {
-        alert`1`
-        Window.SetSize(150, 1150)
-    }
 </script>
 
 <main class="tip-view">
     {#each opts as group,gi}
         <div class="ctx-menu-group" onclick={Window.Hide}>
-            {#each group as item,itemIndex}
-                <div class="ctx-menu-item" style:color={item.color} onclick={()=> item.click?.()}>
+            {#each group as item,di}
+                <div class="ctx-menu-item" style:color={item.color} onclick={()=> item.click?.(di)}>
                     {#if item.icon}
                         <div class="icon">{item.icon}</div>
                     {/if}

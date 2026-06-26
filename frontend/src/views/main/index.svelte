@@ -7,31 +7,31 @@
 
     let display = $state(0);
     let change = $state(false);
+    let oldConfig = JSON.parse(JSON.stringify(appConfig));
 
     Window.SetAlwaysOnTop(true);
     (() => {
         Screens.GetAll().then((screens) => {
             display = screens;
-            for (let i = 0; i < screens.length; i++) {
-                if (!appConfig.monitorDirs[i]) appConfig.monitorDirs[i] = [];
-            }
         });
     })()
 
     const openDir = async (monitorIndex) => {
+        let dirs = appConfig.monitorDirs[monitorIndex].Dirs
         let res = await Dialogs.OpenFile({
             CanChooseDirectories: true,
             AllowsMultipleSelection: true,
             CanChooseFiles: false,
         })
         if (res && res.length > 0) {
-            appConfig.monitorDirs[monitorIndex] = [...(appConfig.monitorDirs[monitorIndex] || []), ...res];
+            if (!dirs.includes(res[0])) dirs.push(res[0])
+            console.log(appConfig.monitorDirs[monitorIndex])
         }
         change = true
     }
 
     const removeDir = (monitorIndex, dirIndex) => {
-        appConfig.monitorDirs[monitorIndex] = appConfig.monitorDirs[monitorIndex].filter((_, i) => i !== dirIndex);
+        appConfig.monitorDirs[monitorIndex].Dirs.splice(dirIndex, 1);
         change = true
     }
 
@@ -45,13 +45,12 @@
     }
 
     const cancel = async () => {
-        const {ConfigService} = await import('~/index.js')
-        const res = await ConfigService.GetConfig()
-        Object.assign(appConfig, res)
+        Object.assign(appConfig, JSON.parse(JSON.stringify(oldConfig)))
         change = false;
     }
 
-    const viewSm = () => {}
+    const viewSm = () => {
+    }
 </script>
 
 <main class="main-box">
@@ -76,7 +75,7 @@
                 </div>
 
                 <div class="select">
-                    <input type="number" placeholder="切换间隔(分钟)" bind:value={appConfig.interval} onchange={()=> {change=true}}>
+                    <input type="number" placeholder="切换间隔(分钟)" bind:value={appConfig.monitorDirs[i].Interval} onchange={()=> {change=true}}>
                     <span class="input-tip" title="设置壁纸自动切换的时间间隔，单位为分钟">⚠</span>
                     <button class="dir-add" onclick={() => openDir(i)}>
                         <img src="wfjmjw.png" alt="" height="19px">
@@ -85,10 +84,10 @@
                 </div>
 
                 <div class="d-s-dirs">
-                    {#each (appConfig.monitorDirs[i] || []) as dir, j}
+                    {#each (appConfig.monitorDirs[i].Dirs || []) as dir, di}
                         <div class="dir-item">
                             <span class="dir-path" title={dir}> {dir} </span>
-                            <button class="dir-del" onclick={() => removeDir(i, j)}>✕</button>
+                            <button class="dir-del" onclick={() => removeDir(i, di)}>✕</button>
                         </div>
                     {/each}
                 </div>
@@ -110,7 +109,7 @@
         display: grid;
         height: 100vh;
         grid-template-rows: 40px 1fr auto auto;
-        background-color: rgba(243, 243, 243, 0.92);
+        background-color: rgba(243, 243, 243, 0.95);
         border-radius: 4px;
     }
 
@@ -176,7 +175,7 @@
                     position: sticky;
                     left: 9999px;
                     border-radius: 3px;
-                    border: 1px #ccc solid;
+                    //border: 1px #ccc solid;
                     padding: 3px 10px;
                     transition: 0.1s ease;
                     display: flex;

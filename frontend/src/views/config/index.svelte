@@ -24,7 +24,7 @@
             mode: 'select', value: appConfig.strategy,
             options: [
                 {value: 0, text: "协同切换"}, {value: 1, text: "顺序屏幕切换"},
-                {value: 2, text: "随机屏幕切换"}, {value: 3, text: "鼠标所在屏幕"}
+                {value: 2, text: "随机屏幕切换"},/* {value: 3, text: "鼠标所在屏幕"}*/
             ],
             onchange: (v) => {
                 appConfig.strategy = v;
