@@ -94,7 +94,7 @@
         {/each}
     </div>
 
-    <ShowOK show={change} ok={okSet} cancel={cancel}></ShowOK>
+    <ShowOK show={change} ok={okSet} cancel={cancel}/>
 
     <div class="bottom-box">
         <button onclick={viewSm} title="使用说明"></button>

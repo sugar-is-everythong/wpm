@@ -39,7 +39,7 @@ const (
 
 // initDisplayMap 程序启动时调用，缓存所有显示器信息到 displayMap
 func initDisplayMap() {
-	// 初始化 COM，使用单线程单元（STA），与 C# 的 [STAThread] 等价
+	// 初始化 COM，使用单线程单元（STA）
 	if err := ole.CoInitializeEx(0, ole.COINIT_APARTMENTTHREADED|ole.COINIT_DISABLE_OLE1DDE); err != nil {
 		log.Fatalf("CoInitializeEx failed: %v", err)
 	}

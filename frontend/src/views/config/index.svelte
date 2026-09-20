@@ -134,7 +134,7 @@
         display: grid;
         height: 100vh;
         grid-template-rows: 40px 1fr auto;
-        background-color: rgb(255 255 255/0.9);
+        background-color: rgb(255 255 255/1);
         border-radius: 4px;
         font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
         user-select: none;
