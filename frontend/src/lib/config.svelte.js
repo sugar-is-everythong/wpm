@@ -8,7 +8,7 @@ export const appConfig = $state({
     registerContextMenu: true,
     autoMatchRatio: true,
     wallpaperFit: 4,
-    monitorDirs: {}, // {dirs:[], d:0, interval:0} 文件目录、优先级、切换间隔
+    monitorDirs: {}, // {0:{dirs:[], d:0, Interval:0}} 屏幕索引：{文件目录、优先级（未实现）、切换间隔}
     autoRun: false,
 })
 
@@ -28,5 +28,14 @@ export async function loadConfig() {
  * 保存当前内存配置到 Go / 文件
  */
 export async function saveConfig() {
+
+    for (let k in appConfig.monitorDirs) {
+        const m = appConfig.monitorDirs[k]
+        if (m.Dirs.length === 0) return "壁纸目录不能为空"
+
+        m.Interval = Math.ceil(m.Interval)
+        if (m.Interval <= 0) return "切换间隔必须大于0"
+    }
+
     await ConfigService.Save({...appConfig})
 }

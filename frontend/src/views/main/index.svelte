@@ -4,6 +4,7 @@
     import {route} from "@mateothegreat/svelte5-router";
     import ShowOK from "@/lib/ShowOK.svelte";
     import {appConfig, saveConfig} from "@/lib/config.svelte.js";
+    import {toast} from "../../lib/toast.js";
 
     let display = $state(0);
     let change = $state(false);
@@ -37,7 +38,12 @@
 
     const okSet = async () => {
         try {
-            await saveConfig();
+            const err = await saveConfig();
+            if (err) {
+                toast.warning(err)
+                return
+            }
+            oldConfig = appConfig
             change = false;
         } catch (e) {
             console.error("保存失败:", e);
