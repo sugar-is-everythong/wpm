@@ -74,13 +74,41 @@ func configPath() string {
 	return filepath.Join(dir, "wpm", "config.json")
 }
 
-// LoadConfig 从文件加载配置
+// defaultConfig 生成默认配置，按当前显示器数量为每个显示器生成配置条目
+func defaultConfig() AppConfig {
+	cfg := Config
+	cfg.MonitorDirs = make(map[int]preference)
+
+	// 默认壁纸目录，首次运行先占位，用户可在界面中修改
+	pictures := filepath.Join(os.Getenv("USERPROFILE"), "Pictures")
+	if home, err := os.UserHomeDir(); err == nil {
+		pictures = filepath.Join(home, "Pictures")
+	}
+
+	// 保证前端按显示器索引绑定时每个索引都有值
+	count := 1
+	if App != nil && App.Screen != nil {
+		if screens := App.Screen.GetAll(); len(screens) > 0 {
+			count = len(screens)
+		}
+	}
+	for i := 0; i < count; i++ {
+		cfg.MonitorDirs[i] = preference{
+			Dirs:     []string{pictures},
+			Interval: 30,
+		}
+	}
+	return cfg
+}
+
+// LoadConfig 从文件加载配置，配置文件不存在时生成默认配置文件
 func LoadConfig() error {
 	path := configPath()
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil // 配置文件不存在，使用默认值
+			Config = defaultConfig()
+			return SaveConfig() // 首次运行写出一份符合格式的配置文件
 		}
 		return fmt.Errorf("读取配置文件失败: %w", err)
 	}
